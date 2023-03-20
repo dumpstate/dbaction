@@ -1,7 +1,7 @@
 import type { Pool, PoolClient } from "pg"
 
 import {
-	DBAction,
+	DBAction as dbDBAction,
 	chain as dbChain,
 	flatten as dbFlatten,
 	pure as dbPure,
@@ -46,126 +46,126 @@ export class Transactor implements TransactorInterface<PoolClient> {
 	}
 }
 
-export type PGAction<T> = DBAction<PoolClient, T>
+export class DBAction<T> extends dbDBAction<PoolClient, T> {}
 
-export const flatten = <T>(actions: PGAction<T>[]): PGAction<T[]> =>
+export const flatten = <T>(actions: DBAction<T>[]): DBAction<T[]> =>
 	dbFlatten(actions)
-export const pure = <T>(p: Promise<T> | T | (() => Promise<T>)): PGAction<T> =>
+export const pure = <T>(p: Promise<T> | T | (() => Promise<T>)): DBAction<T> =>
 	dbPure(p)
 
-export function chain<A>(action: PGAction<A>): PGAction<A>
+export function chain<A>(action: DBAction<A>): DBAction<A>
 export function chain<A, B>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>
-): PGAction<B>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>
+): DBAction<B>
 export function chain<A, B, C>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>,
-	action3: (input: B) => PGAction<C>
-): PGAction<C>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>,
+	action3: (input: B) => DBAction<C>
+): DBAction<C>
 export function chain<A, B, C, D>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>,
-	action3: (input: B) => PGAction<C>,
-	action4: (input: C) => PGAction<D>
-): PGAction<D>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>,
+	action3: (input: B) => DBAction<C>,
+	action4: (input: C) => DBAction<D>
+): DBAction<D>
 export function chain<A, B, C, D, E>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>,
-	action3: (input: B) => PGAction<C>,
-	action4: (input: C) => PGAction<D>,
-	action5: (input: D) => PGAction<E>
-): PGAction<E>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>,
+	action3: (input: B) => DBAction<C>,
+	action4: (input: C) => DBAction<D>,
+	action5: (input: D) => DBAction<E>
+): DBAction<E>
 export function chain<A, B, C, D, E, F>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>,
-	action3: (input: B) => PGAction<C>,
-	action4: (input: C) => PGAction<D>,
-	action5: (input: D) => PGAction<E>,
-	action6: (input: E) => PGAction<F>
-): PGAction<F>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>,
+	action3: (input: B) => DBAction<C>,
+	action4: (input: C) => DBAction<D>,
+	action5: (input: D) => DBAction<E>,
+	action6: (input: E) => DBAction<F>
+): DBAction<F>
 export function chain<A, B, C, D, E, F, G>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>,
-	action3: (input: B) => PGAction<C>,
-	action4: (input: C) => PGAction<D>,
-	action5: (input: D) => PGAction<E>,
-	action6: (input: E) => PGAction<F>,
-	action7: (input: F) => PGAction<G>
-): PGAction<G>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>,
+	action3: (input: B) => DBAction<C>,
+	action4: (input: C) => DBAction<D>,
+	action5: (input: D) => DBAction<E>,
+	action6: (input: E) => DBAction<F>,
+	action7: (input: F) => DBAction<G>
+): DBAction<G>
 export function chain<A, B, C, D, E, F, G, H>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>,
-	action3: (input: B) => PGAction<C>,
-	action4: (input: C) => PGAction<D>,
-	action5: (input: D) => PGAction<E>,
-	action6: (input: E) => PGAction<F>,
-	action7: (input: F) => PGAction<G>,
-	action8: (input: G) => PGAction<H>
-): PGAction<H>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>,
+	action3: (input: B) => DBAction<C>,
+	action4: (input: C) => DBAction<D>,
+	action5: (input: D) => DBAction<E>,
+	action6: (input: E) => DBAction<F>,
+	action7: (input: F) => DBAction<G>,
+	action8: (input: G) => DBAction<H>
+): DBAction<H>
 export function chain<A, B, C, D, E, F, G, H, I>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>,
-	action3: (input: B) => PGAction<C>,
-	action4: (input: C) => PGAction<D>,
-	action5: (input: D) => PGAction<E>,
-	action6: (input: E) => PGAction<F>,
-	action7: (input: F) => PGAction<G>,
-	action8: (input: G) => PGAction<H>,
-	action9: (input: H) => PGAction<I>
-): PGAction<I>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>,
+	action3: (input: B) => DBAction<C>,
+	action4: (input: C) => DBAction<D>,
+	action5: (input: D) => DBAction<E>,
+	action6: (input: E) => DBAction<F>,
+	action7: (input: F) => DBAction<G>,
+	action8: (input: G) => DBAction<H>,
+	action9: (input: H) => DBAction<I>
+): DBAction<I>
 export function chain<A, B, C, D, E, F, G, H, I, J>(
-	action: PGAction<A>,
-	action2: (input: A) => PGAction<B>,
-	action3: (input: B) => PGAction<C>,
-	action4: (input: C) => PGAction<D>,
-	action5: (input: D) => PGAction<E>,
-	action6: (input: E) => PGAction<F>,
-	action7: (input: F) => PGAction<G>,
-	action8: (input: G) => PGAction<H>,
-	action9: (input: H) => PGAction<I>,
-	action10: (input: I) => PGAction<J>
-): PGAction<J>
+	action: DBAction<A>,
+	action2: (input: A) => DBAction<B>,
+	action3: (input: B) => DBAction<C>,
+	action4: (input: C) => DBAction<D>,
+	action5: (input: D) => DBAction<E>,
+	action6: (input: E) => DBAction<F>,
+	action7: (input: F) => DBAction<G>,
+	action8: (input: G) => DBAction<H>,
+	action9: (input: H) => DBAction<I>,
+	action10: (input: I) => DBAction<J>
+): DBAction<J>
 export function chain(
-	action: PGAction<any>,
-	...args: ((input: any) => PGAction<any>)[]
-): PGAction<any> {
+	action: DBAction<any>,
+	...args: ((input: any) => DBAction<any>)[]
+): DBAction<any> {
 	return dbChain(action, ...(args as []))
 }
 
 export function sequence<A, B>(
-	action: PGAction<A>,
-	action2: PGAction<B>
-): PGAction<[A, B]>
+	action: DBAction<A>,
+	action2: DBAction<B>
+): DBAction<[A, B]>
 export function sequence<A, B, C>(
-	action: PGAction<A>,
-	action2: PGAction<B>,
-	action3: PGAction<C>
-): PGAction<[A, B, C]>
+	action: DBAction<A>,
+	action2: DBAction<B>,
+	action3: DBAction<C>
+): DBAction<[A, B, C]>
 export function sequence<A, B, C, D>(
-	action: PGAction<A>,
-	action2: PGAction<B>,
-	action3: PGAction<C>,
-	action4: PGAction<D>
-): PGAction<[A, B, C, D]>
+	action: DBAction<A>,
+	action2: DBAction<B>,
+	action3: DBAction<C>,
+	action4: DBAction<D>
+): DBAction<[A, B, C, D]>
 export function sequence<A, B, C, D, E>(
-	action: PGAction<A>,
-	action2: PGAction<B>,
-	action3: PGAction<C>,
-	action4: PGAction<D>,
-	action5: PGAction<E>
-): PGAction<[A, B, C, D, E]>
+	action: DBAction<A>,
+	action2: DBAction<B>,
+	action3: DBAction<C>,
+	action4: DBAction<D>,
+	action5: DBAction<E>
+): DBAction<[A, B, C, D, E]>
 export function sequence<A, B, C, D, E, F>(
-	action: PGAction<A>,
-	action2: PGAction<B>,
-	action3: PGAction<C>,
-	action4: PGAction<D>,
-	action5: PGAction<E>,
-	action6: PGAction<F>
-): PGAction<[A, B, C, D, E, F]>
+	action: DBAction<A>,
+	action2: DBAction<B>,
+	action3: DBAction<C>,
+	action4: DBAction<D>,
+	action5: DBAction<E>,
+	action6: DBAction<F>
+): DBAction<[A, B, C, D, E, F]>
 export function sequence(
-	action: PGAction<any>,
-	...args: PGAction<any>[]
-): PGAction<any> {
+	action: DBAction<any>,
+	...args: DBAction<any>[]
+): DBAction<any> {
 	return (dbSequence as any)(action, ...(args as []))
 }
