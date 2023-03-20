@@ -1,4 +1,4 @@
-import type { Pool, PoolClient } from "pg"
+import { Pool, PoolClient, QueryResult } from "pg"
 
 import {
 	DBAction as dbDBAction,
@@ -47,6 +47,10 @@ export class Transactor implements TransactorInterface<PoolClient> {
 }
 
 export class DBAction<T> extends dbDBAction<PoolClient, T> {}
+
+export function query(stmt: string): DBAction<QueryResult<any>> {
+	return new DBAction((pool: PoolClient) => pool.query(stmt))
+}
 
 export const flatten = <T>(actions: DBAction<T>[]): DBAction<T[]> =>
 	dbFlatten(actions)

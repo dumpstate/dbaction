@@ -1,7 +1,7 @@
 import { test } from "tap"
-import { Pool, PoolClient } from "pg"
+import { Pool } from "pg"
 
-import { DBAction, Transactor, pure } from "../src/PG"
+import { Transactor, query, pure } from "../src/PG"
 
 test("DBAction", async (t) => {
 	const tr = new Transactor(new Pool())
@@ -9,9 +9,7 @@ test("DBAction", async (t) => {
 	t.teardown(() => tr.close())
 
 	t.test("should run a query", async (t) => {
-		const res = await new DBAction((pool: PoolClient) =>
-			pool.query("SELECT 42 AS num")
-		)
+		const res = await query("SELECT 42 AS num")
 			.map((res) => res.rows[0].num)
 			.run(tr)
 
@@ -19,9 +17,7 @@ test("DBAction", async (t) => {
 	})
 
 	t.test("should transact a query", async (t) => {
-		const res = await new DBAction((pool: PoolClient) =>
-			pool.query("SELECT 43 AS num")
-		)
+		const res = await query("SELECT 43 AS num")
 			.map((res) => res.rows[0].num)
 			.transact(tr)
 
