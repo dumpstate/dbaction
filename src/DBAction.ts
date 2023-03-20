@@ -23,19 +23,25 @@ export class DBAction<C, T> {
 	}
 
 	public async run(tr: Transactor<C>): Promise<T> {
-		for await (const conn of tr.conn()) {
-			return await this._action(conn)
-		}
+		const generator = tr.conn()
 
-		throw new Error("failed to acquire connection from Transactor")
+		try {
+			const { value: conn } = await generator.next()
+			return await this._action(conn)
+		} finally {
+			generator.return(null)
+		}
 	}
 
 	public async transact(tr: Transactor<C>): Promise<T> {
-		for await (const conn of tr.transact()) {
-			return await this._action(conn)
-		}
+		const generator = tr.transact()
 
-		throw new Error("failed to acquire transaction from Transactor")
+		try {
+			const { value: conn } = await generator.next()
+			return await this._action(conn)
+		} finally {
+			generator.return(null)
+		}
 	}
 }
 

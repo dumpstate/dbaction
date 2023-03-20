@@ -16,7 +16,7 @@ export class Transactor implements TransactorInterface<PoolClient> {
 		this.pool = pool
 	}
 
-	public async *conn(): AsyncGenerator<PoolClient> {
+	async *conn(): AsyncGenerator<PoolClient> {
 		const conn = await this.pool.connect()
 
 		try {
@@ -26,7 +26,7 @@ export class Transactor implements TransactorInterface<PoolClient> {
 		}
 	}
 
-	public async *transact(): AsyncGenerator<PoolClient> {
+	async *transact(): AsyncGenerator<PoolClient> {
 		const conn = await this.pool.connect()
 
 		try {
@@ -40,9 +40,13 @@ export class Transactor implements TransactorInterface<PoolClient> {
 			conn.release()
 		}
 	}
+
+	async close(): Promise<void> {
+		await this.pool.end()
+	}
 }
 
-export type PGAction<T> = DBAction<Transactor, T>
+export type PGAction<T> = DBAction<PoolClient, T>
 
 export const flatten = <T>(actions: PGAction<T>[]): PGAction<T[]> =>
 	dbFlatten(actions)
