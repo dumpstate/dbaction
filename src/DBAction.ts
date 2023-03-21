@@ -25,16 +25,22 @@ export class DBAction<C, T> {
 	public async run(tr: Transactor<C>): Promise<T> {
 		const generator = tr.conn()
 		const { value: conn } = await generator.next()
-		const res = await this._action(conn)
-		await generator.return(null)
-		return res
+
+		try {
+			const res = await this._action(conn)
+			await generator.return(null)
+			return res
+		} catch (err) {
+			await generator.throw(err)
+			throw err
+		}
 	}
 
 	public async transact(tr: Transactor<C>): Promise<T> {
 		const generator = tr.transact()
+		const { value: conn } = await generator.next()
 
 		try {
-			const { value: conn } = await generator.next()
 			const res = await this._action(conn)
 			await generator.return(null)
 			return res

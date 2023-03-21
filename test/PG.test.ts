@@ -69,6 +69,18 @@ test("DBAction", async (t) => {
 
 		t.match(res, 1)
 	})
+
+	t.test("should reject the promise on exception", async (t) => {
+		t.rejects(
+			query("SELECT COUNT(*) FROM foo")
+				.map(() => {
+					throw new Error("error message")
+				})
+				.run(tr),
+			{},
+			"error message"
+		)
+	})
 })
 
 test("DBAction utils", async (t) => {
