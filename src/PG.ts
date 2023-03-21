@@ -28,15 +28,16 @@ export class Transactor implements TransactorInterface<PoolClient> {
 
 	async *transact(): AsyncGenerator<PoolClient> {
 		const conn = await this.pool.connect()
+		let commit = true
 
 		try {
 			await conn.query("BEGIN")
 			yield conn
-			await conn.query("COMMIT")
 		} catch (err) {
-			await conn.query("ROLLBACK")
+			commit = false
 			throw err
 		} finally {
+			await conn.query(commit ? "COMMIT" : "ROLLBACK")
 			conn.release()
 		}
 	}
@@ -48,8 +49,11 @@ export class Transactor implements TransactorInterface<PoolClient> {
 
 export class DBAction<T> extends dbDBAction<PoolClient, T> {}
 
-export function query(stmt: string): DBAction<QueryResult<any>> {
-	return new DBAction((pool: PoolClient) => pool.query(stmt))
+export function query(
+	stmt: string,
+	...args: any[]
+): DBAction<QueryResult<any>> {
+	return new DBAction((pool: PoolClient) => pool.query(stmt, args))
 }
 
 export const flatten = <T>(actions: DBAction<T>[]): DBAction<T[]> =>
