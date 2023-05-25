@@ -1,13 +1,12 @@
 {
 	"name": "@dumpstate/dbaction",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "reader monad for database connection",
 	"main": "lib/index.js",
 	"scripts": {
 		"build": "tsc --project tsconfig.json",
 		"build:test": "tsc --project test.tsconfig.json",
 		"lint": "npm run style:check",
-		"prepare": "husky install",
 		"prepublish": "npm run build",
 		"style:check": "prettier --check .",
 		"style:fix": "prettier --write .",
@@ -17,12 +16,11 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@types/tap": "^15.0.8",
-		"@types/pg": "^8.6.6",
-		"husky": "^8.0.3",
+		"@types/pg": "^8.10.1",
 		"pg": "^8.10.0",
-		"prettier": "2.8.4",
+		"prettier": "2.8.8",
 		"tap": "^16.3.4",
-		"typescript": "^5.0.2"
+		"typescript": "^5.0.4"
 	},
 	"optionalDependencies": {
 		"pg": "8.x"
