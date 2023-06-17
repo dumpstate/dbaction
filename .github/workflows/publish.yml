@@ -13,9 +13,8 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - run: |
-                  npm config set //npm.pkg.github.com/:_authToken ${TOKEN}
-                  npm install
-                  npm publish
-              env:
-                  TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - run: npm ci
+
+            - uses: JS-DevTools/npm-publish@v2
+              with:
+                token: ${{ secrets.NPM_TOKEN }}

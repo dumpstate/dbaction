@@ -29,7 +29,7 @@
 		"check-coverage": false
 	},
 	"publishConfig": {
-		"registry": "https://npm.pkg.github.com/",
-		"access": "public"
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
 	}
 }
