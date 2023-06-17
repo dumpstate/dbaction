@@ -1,6 +1,6 @@
 {
 	"name": "@dumpstate/dbaction",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "reader monad for database connection",
 	"main": "lib/index.js",
 	"scripts": {
@@ -13,6 +13,7 @@
 		"test": "npm run build:test && PGUSER=dbaction PGHOST=localhost PGDATABASE=dbaction_db tap libtest/test/*.test.js libtest/test/**/*.test.js"
 	},
 	"author": "Albert Sadowski <asadowski@mailbox.org>",
+	"repository": "dumpstate/dbaction",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/tap": "^15.0.8",
