@@ -1,33 +1,29 @@
 {
 	"name": "@dumpstate/dbaction",
-	"version": "0.2.3",
+	"version": "0.2.5",
 	"description": "reader monad for database connection",
 	"main": "lib/index.js",
 	"scripts": {
 		"build": "tsc --project tsconfig.json",
-		"build:test": "tsc --project test.tsconfig.json",
-		"lint": "npm run style:check",
+		"lint": "prettier --check .",
 		"prepublish": "npm run build",
-		"style:check": "prettier --check .",
 		"style:fix": "prettier --write .",
-		"test": "npm run build:test && PGUSER=dbaction PGHOST=localhost PGDATABASE=dbaction_db tap libtest/test/*.test.js libtest/test/**/*.test.js"
+		"test": "PGUSER=dbaction PGHOST=localhost PGDATABASE=dbaction_db mocha --require ts-node/register test/*.test.ts test/**/*.test.ts"
 	},
 	"author": "Albert Sadowski <asadowski@mailbox.org>",
 	"repository": "dumpstate/dbaction",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/tap": "^15.0.8",
-		"@types/pg": "^8.10.1",
+		"@types/mocha": "^10.0.1",
+		"@types/pg": "^8.10.2",
+		"mocha": "^10.2.0",
 		"pg": "^8.10.0",
-		"prettier": "2.8.8",
-		"tap": "^16.3.4",
-		"typescript": "^5.0.4"
+		"prettier": "^3.0.0",
+		"ts-node": "^10.9.1",
+		"typescript": "^5.1.6"
 	},
 	"optionalDependencies": {
 		"pg": "8.x"
-	},
-	"tap": {
-		"check-coverage": false
 	},
 	"publishConfig": {
 		"access": "public",

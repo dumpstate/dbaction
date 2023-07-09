@@ -1,63 +1,66 @@
-import { test } from "tap"
+import assert from "node:assert/strict"
+
 import { Pool, QueryResult } from "pg"
 
 import { Transactor, chain, flatten, query, pure, sequence } from "../src/PG"
 
 function getNum(res: QueryResult<any>): number {
-	return res.rows[0].num
+	return parseInt(res.rows[0].num, 10)
 }
 
-test("DBAction", async (t) => {
+describe("DBAction", () => {
 	const tr = new Transactor(new Pool())
 
-	t.before(() =>
-		query("CREATE TABLE IF NOT EXISTS foo(bar INTEGER PRIMARY KEY)").run(tr)
+	before(() =>
+		query("CREATE TABLE IF NOT EXISTS foo(bar INTEGER PRIMARY KEY)").run(
+			tr,
+		),
 	)
 
-	t.beforeEach(() => query("DELETE FROM foo").run(tr))
+	beforeEach(() => query("DELETE FROM foo").run(tr))
 
-	t.teardown(async () => {
+	after(async () => {
 		await query("DROP TABLE IF EXISTS foo").transact(tr)
 		await tr.close()
 	})
 
-	t.test("should run a query", async (t) => {
+	it("should run a query", async () => {
 		const res = await query("SELECT 42 AS num").map(getNum).run(tr)
 
-		t.ok(res === 42)
+		assert(res === 42)
 	})
 
-	t.test("should transact a query", async (t) => {
+	it("should transact a query", async () => {
 		const res = await query("SELECT 43 AS num").map(getNum).transact(tr)
 
-		t.ok(res === 43)
+		assert(res === 43)
 	})
 
-	t.test("should flatMap onto another DBAction", async (t) => {
+	it("should flatMap onto another DBAction", async () => {
 		const res = await query("SELECT 44 AS num")
 			.map(getNum)
 			.flatMap((num) => query("SELECT $1 + 1 AS num", num))
 			.map(getNum)
 			.run(tr)
 
-		t.ok(res === 45)
+		assert(res === 45)
 	})
 
-	t.test("should return just created record", async (t) => {
+	it("should return just created record", async () => {
 		const res = await chain(
 			query("INSERT INTO foo (bar) VALUES (1), (2), (3)"),
-			() => query("SELECT COUNT(*) AS num FROM foo").map(getNum)
+			() => query("SELECT COUNT(*) AS num FROM foo").map(getNum),
 		).transact(tr)
 
-		t.match(res, 3)
+		assert.equal(res, 3)
 	})
 
-	t.test("should rollback transaction", async (t) => {
+	it("should rollback transaction", async () => {
 		await query("INSERT INTO foo (bar) VALUES (1)").transact(tr)
 
 		try {
 			await chain(query("INSERT INTO foo (bar) VALUES (2), (3)"), () =>
-				query("INSERT INTO foo (bar) VALUES (3)")
+				query("INSERT INTO foo (bar) VALUES (3)"),
 			)
 				.map(getNum)
 				.transact(tr)
@@ -67,46 +70,46 @@ test("DBAction", async (t) => {
 			.map(getNum)
 			.run(tr)
 
-		t.match(res, 1)
+		assert.equal(res, 1)
 	})
 
-	t.test("should reject the promise on exception", async (t) => {
-		t.rejects(
+	it("should reject the promise on exception", async () => {
+		assert.rejects(
 			query("SELECT COUNT(*) FROM foo")
 				.map(() => {
 					throw new Error("error message")
 				})
 				.run(tr),
 			{},
-			"error message"
+			"error message",
 		)
 	})
 })
 
-test("DBAction utils", async (t) => {
+describe("DBAction utils", async () => {
 	const tr = new Transactor(new Pool())
 
-	t.teardown(() => tr.close())
+	after(() => tr.close())
 
-	t.test("pure", async (t) => {
-		t.test("should wrap a value with PGAction", async (t) => {
+	it("pure", async () => {
+		it("should wrap a value with PGAction", async () => {
 			const res = await pure(42).run(tr)
-			t.ok(res === 42)
+			assert(res === 42)
 		})
 
-		t.test("should wrap a promise with PGAction", async (t) => {
+		it("should wrap a promise with PGAction", async () => {
 			const res = await pure(Promise.resolve(43)).run(tr)
-			t.ok(res === 43)
+			assert(res === 43)
 		})
 
-		t.test("should allow to lazy evaluate the promise", async (t) => {
+		it("should allow to lazy evaluate the promise", async () => {
 			const res = await pure(() => Promise.resolve(44)).run(tr)
-			t.ok(res === 44)
+			assert(res === 44)
 		})
 	})
 
-	t.test("flatten", async (t) => {
-		t.test("should flatten list of DBActions", async (t) => {
+	it("flatten", async () => {
+		it("should flatten list of DBActions", async () => {
 			const res = await flatten([
 				query("SELECT 1 AS num").map(getNum),
 				query("SELECT 2 AS num").map(getNum),
@@ -115,48 +118,48 @@ test("DBAction utils", async (t) => {
 				.map((items) => items.reduce((a, b) => a + b, 0))
 				.run(tr)
 
-			t.ok(res === 6)
+			assert(res === 6)
 		})
 	})
 
-	t.test("chain", async (t) => {
-		t.test("should pass single action", async (t) => {
+	it("chain", async () => {
+		it("should pass single action", async () => {
 			const res = await chain(query("SELECT 1 AS NUM").map(getNum)).run(
-				tr
+				tr,
 			)
 
-			t.ok(res === 1)
+			assert(res === 1)
 		})
 
-		t.test("should chain a sequence of actions", async (t) => {
+		it("should chain a sequence of actions", async () => {
 			const res = await chain(
 				query("SELECT 4 AS num").map(getNum),
 				(prev) => query("SELECT $1 + 1 AS num", prev).map(getNum),
-				(prev) => query("SELECT $1 + 1 AS num", prev).map(getNum)
+				(prev) => query("SELECT $1 + 1 AS num", prev).map(getNum),
 			).run(tr)
 
-			t.ok(res === 6)
+			assert(res === 6)
 		})
 	})
 
-	t.test("sequence", async (t) => {
-		t.test("should pass single action", async (t) => {
+	it("sequence", async () => {
+		it("should pass single action", async () => {
 			// casting to any, as it's not allowed by the type system
 			const res = await (sequence as any)(
-				query("SELECT 1 AS num").map(getNum)
+				query("SELECT 1 AS num").map(getNum),
 			).run(tr)
 
-			t.ok(res === 1)
+			assert(res === 1)
 		})
 
-		t.test("should run a sequence of actions concurrently", async (t) => {
+		it("should run a sequence of actions concurrently", async () => {
 			const res = await sequence(
 				query("SELECT 5 AS num").map(getNum),
 				query("SELECT 6 AS num").map(getNum),
-				query("SELECT 7 AS num").map(getNum)
+				query("SELECT 7 AS num").map(getNum),
 			).run(tr)
 
-			t.match(res, [5, 6, 7])
+			assert.deepEqual(res, [5, 6, 7])
 		})
 	})
 })
