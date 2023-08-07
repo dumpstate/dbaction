@@ -14,8 +14,8 @@ jobs:
             - uses: actions/checkout@v2
 
             - run: |
-                  npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
-                  npm ci
-                  npm publish
+                  pnpm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+                  pnpm ci
+                  pnpm publish
               env:
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
