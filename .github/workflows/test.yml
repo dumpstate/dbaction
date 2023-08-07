@@ -13,17 +13,14 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 8
             - uses: actions/checkout@v2
             - name: Start Docker Compose
               run: docker-compose up -d
             - name: Install Dependencies
-              run: pnpm install
+              run: npm install
             - name: Build
-              run: pnpm run build && pnpm link
+              run: npm run build && npm link
             - name: Lint
-              run: pnpm run lint
+              run: npm run lint
             - name: Test
-              run: pnpm run test
+              run: npm run test
