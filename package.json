@@ -1,6 +1,6 @@
 {
 	"name": "@dumpstate/dbaction",
-	"version": "0.2.5",
+	"version": "0.2.6",
 	"description": "reader monad for database connection",
 	"main": "lib/index.js",
 	"scripts": {
