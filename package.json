@@ -1,8 +1,12 @@
 {
 	"name": "@dumpstate/dbaction",
-	"version": "0.2.6",
+	"version": "0.2.7",
 	"description": "reader monad for database connection",
 	"main": "lib/index.js",
+	"engines": {
+		"node": ">=18",
+		"pnpm": ">=8"
+	},
 	"scripts": {
 		"build": "tsc --project tsconfig.json",
 		"lint": "prettier --check .",
@@ -17,13 +21,13 @@
 		"@types/mocha": "^10.0.1",
 		"@types/pg": "^8.10.2",
 		"mocha": "^10.2.0",
-		"pg": "^8.10.0",
-		"prettier": "^3.0.0",
+		"pg": "^8.11.3",
+		"prettier": "^3.0.2",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.1.6"
+		"typescript": "^5.2.2"
 	},
 	"optionalDependencies": {
-		"pg": "8.x"
+		"pg": "^8.11.3"
 	},
 	"publishConfig": {
 		"access": "public",

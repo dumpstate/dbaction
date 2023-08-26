@@ -14,13 +14,16 @@ jobs:
 
         steps:
             - uses: actions/checkout@v2
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8
             - name: Start Docker Compose
               run: docker-compose up -d
             - name: Install Dependencies
-              run: npm install
+              run: pnpm install
             - name: Build
-              run: npm run build && npm link
+              run: pnpm run build && pnpm link --global
             - name: Lint
-              run: npm run lint
+              run: pnpm lint
             - name: Test
-              run: npm run test
+              run: pnpm test
